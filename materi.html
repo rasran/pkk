@@ -22,6 +22,7 @@
     backdrop-filter: blur(8px);
     animation: fadeIn 1s ease-in-out;
 }
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -61,12 +62,6 @@
     0% { box-shadow: 0 3px 8px rgba(0,0,0,0.3), 0 0 0 0 #e74c3c44; }
     100% { box-shadow: 0 3px 16px rgba(0,0,0,0.4), 0 0 8px 4px #e74c3c33; }
 }
-/* Hapus baris ini karena tooltip tidak selalu bersebelahan di DOM */
-/* .locked-region:hover + .locked-tooltip {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0);
-} */
 
 /* === Lapisan GIF (opsional) === */
 #gifLayer {
@@ -81,8 +76,8 @@
 #petaIndonesia svg,
 #petaIndonesia img {
     width: 100%;
-    height: auto;
     max-width: 700px;
+    height: auto;
     transition: all 0.3s ease;
 }
 
@@ -99,10 +94,8 @@
 }
 #petaIndonesia svg path.locked-region:hover {
     fill: #d2cfcf !important;
-    /* darker gray on hover */
 }
 #petaIndonesia svg path:not(.playable-region):not(.locked-region):hover {
-    /* fallback for other regions */
     fill: #888 !important;
 }
 
@@ -174,15 +167,25 @@ body::before {
 /* === Responsif Mobile === */
 @media (max-width: 600px) {
     #petaIndonesia {
-        padding: 10px;
-        margin: 20px auto;
+        padding: 8px;
+        margin: 15px auto;
     }
+
+    #petaIndonesia svg,
+    #petaIndonesia img {
+        width: 95%;   /* biar penuh layar */
+        max-width: none;
+    }
+
     .btn {
         padding: 10px 20px;
         font-size: 14px;
     }
-}
 
+    h1, h2, h3 {
+        font-size: 18px;
+    }
+}
 
     </style>
 </head>
@@ -406,7 +409,7 @@ body::before {
     <!-- Tambahkan setelah <div id="petaIndonesia"> -->
         </div>
         <div id="kontenMateri" style="margin-top: 30px;"></div>
-        <a href="quiz.html"><button id="kembaliButton" class="btn">Kembali</button></a>
+        <a href="index.html"><button id="kembaliButton" class="btn">Kembali</button></a>
 
       </div>
       <audio src="rainy-day-55933.mp3" id="quiz_music" autoplay loop preload="auto"></audio>
