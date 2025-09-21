@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <title>Game Kuis Tarian</title>
+  <style>
+    /* Reset dan dasar */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('/gambar/materi.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+      text-align: center;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+    #container {
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 15px;
+      padding: 20px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      min-height: 400px;
+      position: relative;
+    }
+
+    h1 {
+      color: #e44d26;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 2px #ccc;
+    }
+
+    #lives {
+      font-size: 1.3em;
+      color: #d9534f;
+      margin-bottom: 15px;
+    }
+
+    #levelText {
+      font-size: 1.1em;
+      color: #3a474a;
+      margin-bottom: 10px;
+    }
+
+    #questionText {
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    #puzzleContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 70%;
+  aspect-ratio: 1 / 1;      /* Pastikan puzzle selalu kotak */
+  margin: 0 auto 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: rgb(199, 199, 199);
+  max-width: 320px;         /* Batasi lebar maksimum puzzle */
+  min-width: 180px;
+}
+
+.puzzle-tile {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;      /* Pastikan setiap tile juga kotak */
+  border: 1px solid #ddd;
+  cursor: grab;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+    .puzzle-tile:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    iframe#videoQuestion {
+      width: 100%;
+      max-width: 560px;
+      aspect-ratio: 16 / 9;
+      margin: 20px auto;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      display: none;
+      min-height: 315px;
+    }
+
+    .option-btn {
+      margin: 10px 5px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      width: 45%;
+      max-width: 200px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .option-btn:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+
+    #nextButton {
+      margin-top: 30px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #28a745;
+      color: white;
+      display: none;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+      max-width: 200px;
+    }
+
+    #nextButton:hover {
+      background-color: #1e7e34;
+      transform: scale(1.05);
+    }
+
+    #resultScreen {
+      background-color: rgba(255, 228, 196, 0.95);
+      border-radius: 15px;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    #resultScreen h2 {
+      color: #e44d26;
+      margin-bottom: 10px;
+    }
+
+    #resultScreen p {
+      font-size: 1.2em;
+    }
+
+    #finalScore {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    #musicButton {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 5px;
+      background-color: #ff9800;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: background-color 0.3s ease;
+      max-width: 100px;
+      display: none;
+    }
+
+    #musicButton:hover {
+      background-color: #e67e22;
+    }
+
+    #optionContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      width: 100%;
+      max-width: 300px;
+    }
+
+  /* ...existing code... */
+
+    #kembaliButton {
+      display: inline-block;
+      margin: 20px;
+      padding: 10px 20px;
+      background-color: #6a6f74;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    #kembaliButton:hover {
+      background-color: #4a4d50;
+    }
+
+    /* Tombol Clue */
+#clue {
+  margin-top: 10px;
+  padding: 10px 18px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #ffc107;
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#clue:hover {
+  background-color: #e0a800;
+  transform: scale(1.05);
+}
+
+/* Gambar Clue */
+#clueImage {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 80%;
+  max-height: 80%;
+  z-index: 100;
+  border: 4px solid #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.3s ease;
+  background-color: #fff;
+}
+
+    /* Responsif untuk HP */
+    @media (max-width: 600px) {
+      #puzzleContainer {
+        max-width: 90%;
+        gap: 4px;
+      }
+
+      body {
+        background-attachment: scroll;
+      }
+
+      #musicButton {
+        position: relative;
+        width: 100%;
+        margin-top: 70px;
+        margin-bottom: 20px;
+        top: auto;
+        right: auto;
+        display: block; /* tampilkan tombol musik di perangkat kecil */
+      }
+
+       #clueImage {
+    max-width: 95%;
+    max-height: 60%;
+  }
+
+  #clue {
+    width: 100%;
+    max-width: 250px;
+  }
+    }
+  </style>
+</head>
+<body>
+  
+
+  <div id="quiz_music" style="display: none;">
+    <button id="musicButton" aria-label="Toggle Music">
+      <img id="iconPlay" src="silent_sound-removebg-preview.png" alt="Play" style="width:28px;display:inline;">
+      <img id="iconPause" src="sound-removebg-preview.png" alt="Pause" style="width:28px;display:none;">
+    </button>
+    <div id="container">
+      <h1>Kuis Tarian Indonesia</h1>
+      <p id="lives">❤️❤️❤️</p>
+      <h2 id="levelText"></h2>
+      <h3 id="questionText"></h3>
+      <div id="puzzleContainer"></div>
+      <img id="clueImage" alt="Clue" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 80%; z-index: 10;" />
+      <iframe id="videoQuestion"></iframe>
+      <div id="optionContainer">
+        <button id="optionA" class="option-btn"></button>
+        <button id="optionB" class="option-btn"></button>
+        <button id="optionC" class="option-btn"></button>
+        <button id="optionD" class="option-btn"></button>
+      </div>
+      <button id="clue" style="display:none;">Clue</button>
+      <button id="nextButton">Lanjut</button>
+    </div>
+  </div>
+
+  <div id="resultScreen" style="display:none;">
+    <h2>Permainan Selesai!</h2>
+    <p>Nama: <span id="finalName"></span></p>
+    <p>Kelas: <span id="finalClass"></span></p>
+    <p>Skor Akhir: <span id="finalScore"></span></p>
+    <button id="kembaliButton">Kembali</button>
+    <br/>
+  </div>
+
+  <audio src="game.mp3" id="soal_music" autoplay loop preload="auto"></audio>
+
+  <script>
+    // Redirect to input_nama.html if player info is missing
+    if (!localStorage.getItem('playerName') || !localStorage.getItem('playerClass')) {
+      window.location.href = 'input_nama.html';
+    }
+
+    // ...existing code...
+    const questions = [
+  {
+    type: "image",
+    question: "Apa nama tarian ini?",
+    tileSources: [
+      "gambar/tebak_ganbar1/jaipon_piece_0_0.png",
+      "gambar/tebak_ganbar1/jaipon_piece_0_1.png",
+      "gambar/tebak_ganbar1/jaipon_piece_0_2.png",
+      "gambar/tebak_ganbar1/jaipon_piece_1_0.png",
+      "gambar/tebak_ganbar1/jaipon_piece_1_1.png",
+      "gambar/tebak_ganbar1/jaipon_piece_1_2.png",
+      "gambar/tebak_ganbar1/jaipon_piece_2_0.png",
+      "gambar/tebak_ganbar1/jaipon_piece_2_1.png",
+      "gambar/tebak_ganbar1/jaipon_piece_2_2.png"
+    ],
+    coloredTileSources: [ // tambahkan ini
+      "gambar/tebak_ganbar1/jaipongwarna_piece_0_0.png",
+      "gambar/tebak_ganbar1/jaipongwarna_piece_0_1.png",
+      "gambar/tebak_ganbar1/jaipongwarna_piece_0_2.png",
+      "gambar/tebak_ganbar1/jaipongwarna_piece_1_0.png",
+      "gambar/tebak_ganbar1/jaipongwarna_piece_1_1.png",
+      "gambar/tebak_ganbar1/jaipongwarna_piece_1_2.png",
+      "gambar/tebak_ganbar1/jaipongwarna_piece_2_0.png",
+      "gambar/tebak_ganbar1/jaipongwarna_piece_2_1.png",
+      "gambar/tebak_ganbar1/jaipongwarna_piece_2_2.png",
+    ],
+    fullColorImage: "gambar/Tari_Jaipong.png",
+    options: ["Tari Piring", "Tari Jaipong", "Tari Saman", "Tari Kecak"],
+    answer: "Tari Jaipong"
+  },
+  {
+    type: "video",
+    src: "video/Tari_Topeng.mp4",
+    question: "Tari apa dalam video ini?",
+    options: ["Tari Topeng", "Tari Merak", "Tari Pendet", "Tari Saman"],
+    answer: "Tari Topeng"
+  },
+  {
+    question:"Dalam konteks budaya, Tari Merak mengandung simbolisme...",
+    options: ["Perlawanan terhadap penjajah","Kedewasaan wanita Sunda","Keindahan, keanggunan, dan pesona", "Kekuatan dan kekuasaan pria"],
+    answer: "Keindahan, keanggunan, dan pesona"
+  },
+  {
+    type: "image",
+    question: "Apa nama tarian ini?",
+    tileSources: [
+      "gambar/tebak_ganbar1/topeng_piece_0_0.png",
+      "gambar/tebak_ganbar1/topeng_piece_0_1.png",
+      "gambar/tebak_ganbar1/topeng_piece_0_2.png",
+      "gambar/tebak_ganbar1/topeng_piece_1_0.png",
+      "gambar/tebak_ganbar1/topeng_piece_1_1.png",
+      "gambar/tebak_ganbar1/topeng_piece_1_2.png",
+      "gambar/tebak_ganbar1/topeng_piece_2_0.png",
+      "gambar/tebak_ganbar1/topeng_piece_2_1.png",
+      "gambar/tebak_ganbar1/topeng_piece_2_2.png"
+    ],
+    coloredTileSources: [ // tambahkan ini
+      "gambar/tebak_ganbar1/topeng_0_0.png",
+      "gambar/tebak_ganbar1/topeng_0_1.png",
+      "gambar/tebak_ganbar1/topeng_0_2.png",
+      "gambar/tebak_ganbar1/topeng_1_0.png",
+      "gambar/tebak_ganbar1/topeng_1_1.png",
+      "gambar/tebak_ganbar1/topeng_1_2.png",
+      "gambar/tebak_ganbar1/topeng_2_0.png",
+      "gambar/tebak_ganbar1/topeng_2_1.png",
+      "gambar/tebak_ganbar1/topeng_2_2.png"
+    ],
+    fullColorImage: "gambar/Tari_Topeng.png",
+    options: ["Tari Piring", "Tari Jaipong", "Tari Saman", "Tari Topeng"],
+    answer: "Tari Topeng"
+  },
+  {
+    type: "video",
+    src: "video/Tari_Merak.mp4",
+    question: "Tari apa dalam video ini?",
+    options: ["Tari Topeng", "Tari Merak", "Tari Pendet", "Tari Saman"],
+    answer: "Tari Merak"
+  },
+  {
+    question:"Apa makna filosofis penggunaan warna topeng dalam Tari Topeng Cirebon?",
+    options:["Warna mewakili wilayah tarian", "Mewakili kepribadian atau karakter moral", " Membedakan antara laki-laki dan perempuan", "Digunakan hanya untuk dekorasi artistik"],
+    answer: "Mewakili kepribadian atau karakter moral"
+  },
+
+  {
+    type: "image",
+    question: "Apa nama tarian ini?",
+    tileSources: [
+      "gambar/tebak_ganbar1/merak_tile_0_0.jpg",
+      "gambar/tebak_ganbar1/merak_tile_0_1.jpg",
+      "gambar/tebak_ganbar1/merak_tile_0_2.jpg",
+      "gambar/tebak_ganbar1/merak_tile_1_0.jpg",
+      "gambar/tebak_ganbar1/merak_tile_1_1.jpg",
+      "gambar/tebak_ganbar1/merak_tile_1_2.jpg",
+      "gambar/tebak_ganbar1/merak_tile_2_0.jpg",
+      "gambar/tebak_ganbar1/merak_tile_2_1.jpg",
+      "gambar/tebak_ganbar1/merak_tile_2_2.jpg"
+    ],
+    coloredTileSources: [ // tambahkan ini
+      "gambar/tebak_ganbar1/merak_piece_0_0.png",
+      "gambar/tebak_ganbar1/merak_piece_0_1.png",
+      "gambar/tebak_ganbar1/merak_piece_0_2.png",
+      "gambar/tebak_ganbar1/merak_piece_1_0.png",
+      "gambar/tebak_ganbar1/merak_piece_1_1.png",
+      "gambar/tebak_ganbar1/merak_piece_1_2.png",
+      "gambar/tebak_ganbar1/merak_piece_2_0.png",
+      "gambar/tebak_ganbar1/merak_piece_2_1.png",
+      "gambar/tebak_ganbar1/merak_piece_2_2.png"
+    ],
+    fullColorImage: "gambar/Tari_Merak.png",
+    options: ["Tari Merak", "Tari Jaipong", "Tari Saman", "Tari Kecak"],
+    answer: "Tari Merak"
+  },
+  {
+    type: "video",
+    src: "video/Tari_Jaipong.mp4",
+    question: "Tari apa dalam video ini?",
+    options: ["Tari Topeng", "Tari Merak", "Tari Jaipong", "Tari Saman"],
+    answer: "Tari Jaipong"
+  },
+  {
+  question:"Apa hubungan antara gerakan dalam Tari Jaipong dan seni bela diri tradisional?",
+  options:["Semua gerakan Jaipong adalah jurus silat", "Gerakan tari meniru postur bertahan silat", "Silat hanya digunakan untuk pembukaan", "Tidak ada hubungan sama sekali"],
+  answer:"Gerakan tari meniru postur bertahan silat"
+  },
+  {
+    question:"Tari Topeng ditarikan secara solo, berpasangan, atau kelompok tergantung...",
+    options:["Banyaknya properti yang dibawa", "Status sosial penari", "Usia penonton", "Jenis upacara dan makna cerita yang dibawakan"],
+    answer:"Jenis upacara dan makna cerita yang dibawakan"
+    }
+];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let lives = 3;
+    let puzzleSelesai = false;
+    let clueTimeout;
+
+    const questionText = document.getElementById("questionText");
+    const videoQuestion = document.getElementById("videoQuestion");
+    const puzzleContainer = document.getElementById("puzzleContainer");
+    const livesDisplay = document.getElementById("lives");
+    const levelText = document.getElementById("levelText");
+    const nextButton = document.getElementById("nextButton");
+    const intro = document.getElementById("intro");
+    const clueImage = document.getElementById("clueImage");
+    const clueButton = document.getElementById("clue");
+    const musicButton = document.getElementById('musicButton');
+    const audio = document.getElementById('soal_music');
+    const iconPlay = document.getElementById('iconPlay');
+    const iconPause = document.getElementById('iconPause');
+    const optionButtons = [
+      document.getElementById("optionA"),
+      document.getElementById("optionB"),
+      document.getElementById("optionC"),
+      document.getElementById("optionD"),
+    ];
+  function selesaiQuiz() {
+    const wilayahId = "ID-JB"; // ID wilayah sesuai path
+    const skorAkhir = score;
+    // Simpan skor ke sessionStorage.skorWilayah
+    let skorWilayah = JSON.parse(sessionStorage.getItem("skorWilayah") || '{}');
+    skorWilayah[wilayahId] = skorAkhir;
+    sessionStorage.setItem("skorWilayah", JSON.stringify(skorWilayah));
+
+    let wilayahSelesai = JSON.parse(sessionStorage.getItem("wilayahSelesai") || "[]");
+    // Hanya tandai selesai jika skor >= 70
+    if (skorAkhir >= 70 && !wilayahSelesai.includes(wilayahId)) {
+      wilayahSelesai.push(wilayahId);
+      sessionStorage.setItem("wilayahSelesai", JSON.stringify(wilayahSelesai));
+    }
+    window.location.href = "materi.html";
+  }
+
+    function updateLives() {
+      livesDisplay.innerHTML = "❤️ ".repeat(lives);
+    }
+
+    // Otomatis mulai quiz jika data sudah ada
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('quiz_music').style.display = 'block';
+      musicButton.style.display = 'block';
+      audio.play();
+      startQuiz();
+    });
+
+    clueButton.addEventListener("click", () => {
+      const q = questions[currentQuestion];
+      if (q.type === "image" && q.fullColorImage) {
+        clueButton.style.display = "none";
+
+        clueImage.onload = () => {
+          clueImage.style.display = "block";
+          setTimeout(() => {
+            clueImage.style.display = "none";
+            clueImage.src = "";
+          }, 3000);
+        };
+        // Muat gambar clue dengan URL unik untuk menghindari cache flicker
+        clueImage.style.display = "none";
+        clueImage.src = q.fullColorImage + "?t=" + Date.now();
+      }
+    });
+
+    musicButton.addEventListener('click', () => {
+  if (audio.paused) {
+    audio.play();
+    iconPlay.style.display = "none";
+    iconPause.style.display = "inline";
+  } else {
+    audio.pause();
+    iconPlay.style.display = "inline";
+    iconPause.style.display = "none";
+  }
+});
+
+// Sinkronkan ikon jika audio dipause/play dari luar
+audio.addEventListener('play', () => {
+  iconPlay.style.display = "none";
+  iconPause.style.display = "inline";
+});
+audio.addEventListener('pause', () => {
+  iconPlay.style.display = "inline";
+  iconPause.style.display = "none";
+});
+
+    function startQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      lives = 3;
+      puzzleSelesai = false;
+      updateLives();
+      showQuestion();
+    }
+
+   function showQuestion() {
+  const q = questions[currentQuestion];
+  questionText.textContent = q.question;
+  levelText.textContent = `Soal ${currentQuestion + 1}`;
+  puzzleContainer.style.display = 'none';
+
+  // Tambahkan baris berikut untuk reset video
+  videoQuestion.style.display = 'none';
+  videoQuestion.src = ""; // <-- reset src agar video berhenti
+
+  nextButton.style.display = 'none';
+  clueImage.src = "";
+  clueImage.style.display = "none";
+  clueImage.onload = null;
+  clueButton.style.display = "none";
+  puzzleSelesai = false;
+  clearTimeout(clueTimeout);
+
+  if (q.type === "image") {
+    loadPuzzle(q.tileSources);
+    puzzleContainer.style.display = 'grid';
+    clueTimeout = setTimeout(() => {
+      if (!puzzleSelesai && q.coloredTileSources) {
+        clueButton.style.display = "inline-block";
+      }
+    }, 15000);
+
+  } else if (q.type === "video") {
+    videoQuestion.src = q.src;
+    videoQuestion.style.display = 'block';
+  }
+
+  optionButtons.forEach((btn, i) => {
+    btn.textContent = q.options[i];
+    btn.style.backgroundColor = "";
+    btn.disabled = (q.type === "image");
+    btn.onclick = () => {
+      if (q.type === "image" && !puzzleSelesai) {
+        alert("Anda harus menyusun puzzle terlebih dahulu sampai selesai!");
+      } else {
+        selectAnswer(q.options[i], q.answer, btn);
+      }
+    };
+  });
+}
+
+    function selesaiSusunPuzzle() {
+      puzzleSelesai = true;
+      clearTimeout(clueTimeout);
+      clueImage.style.display = "none";
+      optionButtons.forEach(btn => btn.disabled = false);
+      console.log("Puzzle selesai disusun!");
+    }
+
+    function selectAnswer(selected, correct, button) {
+      optionButtons.forEach(btn => btn.disabled = true);
+
+      const q = questions[currentQuestion];
+
+      if (selected === correct) {
+        button.style.backgroundColor = "lightgreen";
+        score += 10;
+        new Audio('benar.mp3').play();
+
+        if (q.type === "image" && q.coloredTileSources) {
+          const tiles = [...puzzleContainer.children];
+          tiles.forEach((tile, idx) => {
+            tile.src = q.coloredTileSources[idx];
+          });
+        }
+
+      } else {
+        button.style.backgroundColor = "salmon";
+        lives--;
+        updateLives();
+        new Audio('salah.mp3').play();
+
+        if (lives <= 0) {
+          setTimeout(showResult, 1000);
+          return;
+        }
+      }
+
+      setTimeout(() => {
+        if (lives <= 0 || currentQuestion >= questions.length - 1) {
+          showResult();
+        } else {
+          currentQuestion++;
+          showQuestion();
+        }
+      }, 3000);
+    }
+
+    function showResult() {
+  document.querySelector("h1").style.display = "none";
+  // Ambil dari localStorage jika ada
+  let playerName = localStorage.getItem('playerName') || "(Nama belum diisi)";
+  let playerClass = localStorage.getItem('playerClass') || "(Kelas belum diisi)";
+  document.getElementById("finalScore").textContent = score;
+  document.getElementById("finalName").textContent = playerName;
+  document.getElementById("finalClass").textContent = playerClass;
+
+  document.getElementById("resultScreen").style.display = "block";
+  document.getElementById("questionText").style.display = "none";
+  document.getElementById("container").style.display = "none";
+  puzzleContainer.style.display = "none";
+  videoQuestion.style.display = "none";
+  optionButtons.forEach(btn => (btn.style.display = "none"));
+  nextButton.style.display = "none";
+      clueButton.style.display = "none";
+      clueImage.style.display = "none";
+      musicButton.style.display = "none";
+      audio.pause();
+
+      // Atur tombol lanjut dan pesan
+      const lanjutBtn = document.getElementById('lanjutSoalBtn');
+      const pesanLanjut = document.getElementById('pesanLanjut');
+      if (score >= 70) {
+        lanjutBtn.disabled = false;
+        lanjutBtn.style.opacity = 1;
+        pesanLanjut.style.display = 'none';
+      } else {
+        lanjutBtn.disabled = true;
+        lanjutBtn.style.opacity = 0.5;
+        pesanLanjut.style.display = 'block';
+      }
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+    document.getElementById("kembaliButton").onclick = selesaiQuiz;
+    function loadPuzzle(tileSources) {
+      puzzleContainer.innerHTML = '';
+
+      const correctOrder = [...tileSources];
+      const shuffledOrder = shuffle([...tileSources]);
+
+      shuffledOrder.forEach((src) => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.className = "puzzle-tile";
+        img.draggable = true;
+        img.dataset.index = correctOrder.indexOf(src);
+
+        img.addEventListener("dragstart", dragStart);
+        img.addEventListener("dragover", dragOver);
+        img.addEventListener("drop", dropTile);
+
+        puzzleContainer.appendChild(img);
+      });
+
+      optionButtons.forEach(btn => btn.disabled = true);
+      puzzleSelesai = false;
+    }
+
+    let draggedTile = null;
+
+    function dragStart(e) {
+      draggedTile = e.target;
+    }
+
+    function dragOver(e) {
+      e.preventDefault();
+    }
+
+    function dropTile(e) {
+      e.preventDefault();
+
+      const targetTile = e.target;
+      if (draggedTile && targetTile && draggedTile !== targetTile) {
+        const tempSrc = draggedTile.src;
+        const tempIndex = draggedTile.dataset.index;
+
+        draggedTile.src = targetTile.src;
+        draggedTile.dataset.index = targetTile.dataset.index;
+
+        targetTile.src = tempSrc;
+        targetTile.dataset.index = tempIndex;
+
+        checkPuzzleCompletion();
+      }
+    }
+
+    function checkPuzzleCompletion() {
+      const tiles = [...puzzleContainer.children];
+      const correct = tiles.every((tile, idx) => Number(tile.dataset.index) === idx);
+
+      if (correct) selesaiSusunPuzzle();
+    }
+
+    updateLives();
+  </script>
+</body>
+</html>

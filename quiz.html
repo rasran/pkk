@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Quiz Tebak Gambar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="menu">
+        <button id="toggleButton" style=" position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 5px;
+        background-color: #ff9800;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transition: background-color 0.3s ease;">
+  <img id="iconPlay" src="silent_sound-removebg-preview.png" alt="Play" style="width:28px;display:inline;">
+  <img id="iconPause" src="sound-removebg-preview.png" alt="Pause" style="width:28px;display:none;">    
+    </button>
+        <h1>Rhythmic Grace</h1>
+        <div class="button-container">
+            <a href="input_nama.html"><button id="materiButton">Play</button></a>
+        </div>
+    </div>  
+    <audio id="quiz_music" src="Monkeys-Spinning-Monkeys(chosic.com).mp3" autoplay loop preload="auto"></audio>
+    <script>
+const music = document.getElementById('quiz_music');
+const toggleButton = document.getElementById('toggleButton');
+const iconPlay = document.getElementById('iconPlay');
+const iconPause = document.getElementById('iconPause');
+
+// Fungsi toggle musik dan ikon
+toggleButton.addEventListener('click', () => {
+  if (music.paused) {
+    music.play();
+    iconPlay.style.display = "none";
+    iconPause.style.display = "inline";
+  } else {
+    music.pause();
+    iconPlay.style.display = "inline";
+    iconPause.style.display = "none";
+  }
+});
+
+// Set ikon awal saat halaman dimuat
+window.addEventListener('DOMContentLoaded', () => {
+  if (music.paused) {
+    iconPlay.style.display = "inline";
+    iconPause.style.display = "none";
+  } else {
+    iconPlay.style.display = "none";
+    iconPause.style.display = "inline";
+  }
+});
+
+</script>
+</body>
+</html>

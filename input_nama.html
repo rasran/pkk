@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Nama dan Kelas</title>
+    <style>
+    body {
+    background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+  }
+
+  .form-container {
+    background: #fff;
+    padding: 40px 32px;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+  }
+
+  h2 {
+    margin-bottom: 24px;
+    color: #2d3a4b;
+    font-size: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    color: #2d3a4b;
+    font-weight: 500;
+    text-align: left;
+  }
+
+  .input-group {
+    margin-bottom: 22px;   /* jarak antar input */
+  }
+
+  input[type="text"] {
+    width: 90%;
+    padding: 12px 14px;
+    border: 1px solid #d1d9e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  input[type="text"]:focus {
+    border-color: #4facfe;
+    box-shadow: 0 0 6px rgba(79, 172, 254, 0.4);
+  }
+
+  button {
+    width: 100%;
+    padding: 12px 0;
+    margin-top: 12px;   /* ✅ jarak tambahan dari input */
+    background: linear-gradient(135deg, #28a745, #2ecc71);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-weight: 600;
+  }
+
+  button:hover {
+    background: linear-gradient(135deg, #218838, #27ae60);
+    transform: scale(1.03);
+  }
+
+    /* Animasi masuk */
+    .form-container {
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Masukkan Nama dan Kelas</h2>
+        <form id="formNama">
+            <label for="playerName">Nama:</label>
+            <input type="text" id="playerName" name="playerName" required autocomplete="off">
+            <label for="playerClass">Kelas:</label>
+            <input type="text" id="playerClass" name="playerClass" required autocomplete="off">
+            <button type="submit">Mulai</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('formNama').onsubmit = function(e) {
+            e.preventDefault();
+            const nama = document.getElementById('playerName').value.trim();
+            const kelas = document.getElementById('playerClass').value.trim();
+            if (!nama || !kelas) {
+                alert('Nama dan kelas harus diisi!');
+                return;
+            }
+            localStorage.setItem('playerName', nama);
+            localStorage.setItem('playerClass', kelas);
+            window.location.href = 'materi.html';
+        };
+    </script>
+</body>
+</html>
